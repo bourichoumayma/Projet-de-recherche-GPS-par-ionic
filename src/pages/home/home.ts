@@ -88,3 +88,16 @@ startTracking() {
       this.currentMapTrack.setMap(this.map);
     }
   }
+stopTracking() {
+  let newRoute = { finished: new Date().getTime(), path: this.trackedRoute };
+  this.previousTracks.push(newRoute);
+  this.storage.set('routes', this.previousTracks);
+ 
+  this.isTracking = false;
+  this.positionSubscription.unsubscribe();
+  this.currentMapTrack.setMap(null);
+}
+ 
+showHistoryRoute(route) {
+  this.redrawPath(route);
+}
