@@ -55,3 +55,36 @@ export class HomePage {
     });
   }
 }
+startTracking() {
+    this.isTracking = true;
+    this.trackedRoute = [];
+ 
+    this.positionSubscription = this.geolocation.watchPosition()
+      .pipe(
+        filter((p) => p.coords !== undefined) //Filter Out Errors
+      )
+      .subscribe(data => {
+        setTimeout(() => {
+          this.trackedRoute.push({ lat: data.coords.latitude, lng: data.coords.longitude });
+          this.redrawPath(this.trackedRoute);
+        }, 0);
+      });
+ 
+  }
+ 
+  redrawPath(path) {
+    if (this.currentMapTrack) {
+      this.currentMapTrack.setMap(null);
+    }
+ 
+    if (path.length > 1) {
+      this.currentMapTrack = new google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor: '#ff00ff',
+        strokeOpacity: 1.0,
+        strokeWeight: 3
+      });
+      this.currentMapTrack.setMap(this.map);
+    }
+  }
